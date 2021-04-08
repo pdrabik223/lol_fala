@@ -26,7 +26,7 @@ int main(int argc, char *argv[]){
     SDL_RenderClear(renderer);
     SDL_SetRenderDrawColor(renderer, 255, 0, 0, 255);
 
-    for (i = 0; i < WINDOW_WIDTH*; ++i)
+    for (i = 0; i < WINDOW_WIDTH; ++i)
         SDL_RenderDrawPoint(renderer, i, i);
 
     SDL_RenderPresent(renderer);
