@@ -8,7 +8,13 @@
 #define WINDOW_WIDTH 1200
 #define WINDOW_HEIGHT 600
 
-void window_with_line(int* ptr_to_data ){
+int window_with_line(void *ptr_to_data) {
+
+    ptr_to_data = (int*)ptr_to_data;
+
+    std::cout << ptr_to_data;
+
+
     SDL_Event event;
     SDL_Renderer *renderer;
     SDL_Window *window;
@@ -39,17 +45,24 @@ void window_with_line(int* ptr_to_data ){
 }
 
 
-int main(int argc, char *argv[]){
+int main(int argc, char *argv[]) {
 
-    std::cout<<"lol wtf";
+    std::cout << "lol wtf";
 // 44,1 kHz
 // 44100 times per second
 // 60 fps <- that's me
-    window_with_line(nullptr);
+    int *ptr_to_data = new int (5);
 
-   std::thread main_window (window_with_line, nullptr);
+    std::cout<<*ptr_to_data;
 
+    SDL_Thread *mainthread;
 
-    maifreadow.join();
-return 0;
+    mainthread = SDL_CreateThread(window_with_line, "idk", (void *) ptr_to_data);
+
+    int *thread_status;
+    SDL_WaitThread(mainthread, thread_status);
+
+    printf("Thread returned value: %d\n", *thread_status);
+
+    return 0;
 }
