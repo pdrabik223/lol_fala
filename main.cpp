@@ -5,19 +5,24 @@
 #include <thread>
 #include <cmath>
 #include <conio.h>
+#include <vector>
 #include "SDL2/SDL.h"
+#include "drawing_stuff.h"
 
 #define WINDOW_WIDTH 1200
 #define WINDOW_HEIGHT 600
 #define PI 3.1415
 
-struct wave_info {
 
-    double *amplitude;
-    double *interval;
-    double *volume;
 
-};
+
+// todo 1) make them graphs represent something
+// todo 2) make the mouse comprtoller
+
+
+
+
+
 enum key_pressed {
     up,
     down,
@@ -29,61 +34,11 @@ enum key_pressed {
 
 };
 
-struct rgb_color {
-    rgb_color(double r, double g, double b) : r(r), g(g), b(b) {}
 
-    char r;
-    char g;
-    char b;
-};
-
-rgb_color gen_rainbow(unsigned height, unsigned max_height) {
-    // sine wave algorythm
-    // 3 parts
-    // 1 :
-    // r = cos(i) , g = sin(i), b =0
-    // 2 :
-    // r = 0 , g = cos(i), b = sin(x)
-    // 3:
-    // r = sin(i) , g = 0, b = cos(x)
-    // every part is max_height / 3 translates into 0, PI/2
-
-    // so for example in point 1/3 * max_height
-    // r = cos(PI/2) = 0, g = sin(PI/2) = 1, b = 0
-
-        char witch_third = height / (max_height / 3);
-
-       double height_in_radians;
-        switch (witch_third) {
-            case 0:
-                height_in_radians = height * PI / (max_height / 3) / 2;
-
-                return {cos(height_in_radians) * 255, sin(height_in_radians) * 255, 0};
-            case 1:
-                height -= max_height / 3;
-                height_in_radians = height * PI / (max_height / 3) / 2;
-                return {0, cos(height_in_radians) * 255, sin(height_in_radians) * 255};
-
-            case 2:
-                height -= 2 * max_height / 3;
-                height_in_radians = height * PI / (max_height / 3) / 2;
-                return {sin(height_in_radians) * 255, 0, cos(height_in_radians) * 255};
-
-        }
+std::vector<cord> data;
 
 
-}
-
-struct cord {
-    cord(int x, int y) : x(x), y(y) {}
-
-    int x;
-    int y;
-
-};
-
-
-int window_with_line(void *ptr_to_data) {
+int window_with_line_a(void *ptr_to_data) {
 
     SDL_Event event;
     SDL_Renderer *renderer;
@@ -157,7 +112,7 @@ int window_with_line(void *ptr_to_data) {
                 SDL_RenderClear(renderer);
 
 
-               // SDL_SetRenderDrawColor(renderer, 255, 0, 0, 255);
+                // SDL_SetRenderDrawColor(renderer, 255, 0, 0, 255);
 
                 for (int i = 0; i < WINDOW_WIDTH * (1 / okres); ++i) {
                     cord current_pixel_position = {
@@ -182,19 +137,93 @@ int window_with_line(void *ptr_to_data) {
                     SDL_RenderDrawPoint(renderer, current_pixel_position.x, current_pixel_position.y + 1);
                     SDL_RenderDrawPoint(renderer, current_pixel_position.x, current_pixel_position.y + 2);
                     // left
-                    SDL_RenderDrawPoint(renderer, current_pixel_position.x-2, current_pixel_position.y);
-                    SDL_RenderDrawPoint(renderer, current_pixel_position.x-1, current_pixel_position.y);
+                    SDL_RenderDrawPoint(renderer, current_pixel_position.x - 2, current_pixel_position.y);
+                    SDL_RenderDrawPoint(renderer, current_pixel_position.x - 1, current_pixel_position.y);
                     //right
-                    SDL_RenderDrawPoint(renderer, current_pixel_position.x+1, current_pixel_position.y);
-                    SDL_RenderDrawPoint(renderer, current_pixel_position.x+2, current_pixel_position.y);
+                    SDL_RenderDrawPoint(renderer, current_pixel_position.x + 1, current_pixel_position.y);
+                    SDL_RenderDrawPoint(renderer, current_pixel_position.x + 2, current_pixel_position.y);
                     // corners
-                    SDL_RenderDrawPoint(renderer, current_pixel_position.x-1, current_pixel_position.y-1);
-                    SDL_RenderDrawPoint(renderer, current_pixel_position.x-1, current_pixel_position.y+1);
-                    SDL_RenderDrawPoint(renderer, current_pixel_position.x+1, current_pixel_position.y+1);
-                    SDL_RenderDrawPoint(renderer, current_pixel_position.x+1, current_pixel_position.y-1);
+                    SDL_RenderDrawPoint(renderer, current_pixel_position.x - 1, current_pixel_position.y - 1);
+                    SDL_RenderDrawPoint(renderer, current_pixel_position.x - 1, current_pixel_position.y + 1);
+                    SDL_RenderDrawPoint(renderer, current_pixel_position.x + 1, current_pixel_position.y + 1);
+                    SDL_RenderDrawPoint(renderer, current_pixel_position.x + 1, current_pixel_position.y - 1);
+
+
+                }
+                SDL_RenderPresent(renderer);
+            }
+        }
+    }
+    SDL_DestroyRenderer(renderer);
+    SDL_DestroyWindow(window);
+    SDL_Quit();
+    return 18;
+}
+
+int window_with_line(void *ptr_to_data) {
+
+    SDL_Event event;
+    SDL_Renderer *renderer;
+    SDL_Window *window;
+
+
+    SDL_Init(SDL_INIT_VIDEO);
+    SDL_CreateWindowAndRenderer(WINDOW_WIDTH, WINDOW_HEIGHT, 0, &window, &renderer);
+
+    SDL_SetRenderDrawColor(renderer, 255, 0, 0, 255);
+
+    for (int i = 0; i < WINDOW_WIDTH; ++i)
+        SDL_RenderDrawPoint(renderer, i, WINDOW_HEIGHT / 2);
+    SDL_RenderPresent(renderer); // starting line
+
+    auto time_start = std::chrono::steady_clock::now();
+
+
+    double amplituda = 150;
+    double okres = 0.5;
+    int k = 0;
+    int middle = WINDOW_HEIGHT / 2;
+
+    while (true) {
+        if (SDL_PollEvent(&event) && event.type == SDL_QUIT)
+            break;
+
+        {
+            auto time_dif = std::chrono::duration_cast<std::chrono::milliseconds>(
+                    std::chrono::steady_clock::now() - time_start);
+            // 1s = 1000 milliseconds
+            // 60 frame per second = 1 frame per 16,66  milliseconds
+
+            if (time_dif.count() > 16) {
+                time_start = std::chrono::steady_clock::now();
+
+
+                SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
+                SDL_RenderClear(renderer); // clear last frame
 
 
 
+                cord current_pixel_position = {
+                        0,
+                        WINDOW_HEIGHT / 2
+                };
+                draw_big_point(renderer, current_pixel_position, 6);
+
+
+                current_pixel_position = {
+                        0,
+                        WINDOW_HEIGHT * WINDOW_WIDTH - WINDOW_HEIGHT / 2
+
+                };
+                draw_big_point(renderer, current_pixel_position, 6);
+
+                for (int i = 0; i < data.size(); i++) {
+
+                    current_pixel_position = {
+                            data[i].x,
+                            data[i].y
+                    };
+                    draw_big_point(renderer, current_pixel_position, 6);
 
                 }
                 SDL_RenderPresent(renderer);
@@ -210,15 +239,19 @@ int window_with_line(void *ptr_to_data) {
 
 int main(int argc, char *argv[]) {
 
+    int *ptr_to_data;
+    data.push_back({200, 200});
+    data.push_back({200 * 2, 200 * 2});
+    data.push_back({200 * 3, 200 * 3});
+    data.push_back({200 * 4, 200 * 4});
 
-int * ptr_to_data = nullptr;
     SDL_Thread *mainthread;
 
-     mainthread = SDL_CreateThread(window_with_line, "idk", (void *) ptr_to_data);
+    mainthread = SDL_CreateThread(window_with_line, "idk", (void *) ptr_to_data);
 
 
     int *thread_status;
-      SDL_WaitThread(mainthread, thread_status);
+    SDL_WaitThread(mainthread, thread_status);
 
     printf("Thread returned value: %d\n", *thread_status);
 

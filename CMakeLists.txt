@@ -4,7 +4,9 @@ project(lol_fala)
 set(CMAKE_CXX_STANDARD 14)
 
 add_executable(lol_fala
-        main.cpp)
+        main.cpp
+        drawing_stuff.h
+        drawing_stuff.cpp)
 
 
 set (CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/cmake)
