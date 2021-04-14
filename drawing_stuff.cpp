@@ -41,7 +41,27 @@ rgb_color gen_rainbow(unsigned height, unsigned max_height) {
 
 
 }
+void draw_circle(SDL_Renderer *renderer, cord &point, int R){
 
+    // following (x+a)^2 + (y+b)^2 = r^2
+    //
+
+    int x = point.x - R - 1; // tweleve'o clock
+                             // -1 is there to stay true to the rule
+                             // basically point is a circle with R = 1
+                             // so the dot is made at point
+                             // soo we subtract 1 because R.. ehh you get it
+    int y = point.y;
+
+    for(int i=0;i<R*R;i++){
+        SDL_RenderDrawPoint(renderer, point.x-cos(PI/(2*R)), y+-sin(PI/(2*R)));
+    }
+
+
+
+
+
+}
 
 void draw_point(SDL_Renderer *renderer, cord &point) {
     //set color

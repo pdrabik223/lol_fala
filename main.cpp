@@ -19,7 +19,17 @@
 // todo 1) make them graphs represent something
 // todo 2) make the mouse comprtoller
 
+std::vector<double> interpolate_your_ass_you_bitch(cord begin, cord end, std::vector<cord> data){
 
+    // number of points
+    int p_number = 2 + data.size();
+    int polynomial_degree = p_number-1;
+
+    // so my polynomial will simply be vector of coresponding things
+    std::vector<double> function;
+
+
+}
 
 
 
@@ -201,21 +211,15 @@ int window_with_line(void *ptr_to_data) {
                 SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
                 SDL_RenderClear(renderer); // clear last frame
 
-
-
-                cord current_pixel_position = {
+                cord current_pixel_position = { // draw dot on the left
                         0,
                         WINDOW_HEIGHT / 2
                 };
                 draw_big_point(renderer, current_pixel_position, 6);
 
+                int temp_x = 0; // used to connect first dot to left margin
+                int temp_y = WINDOW_HEIGHT / 2;
 
-                current_pixel_position = {
-                        0,
-                        WINDOW_HEIGHT * WINDOW_WIDTH - WINDOW_HEIGHT / 2
-
-                };
-                draw_big_point(renderer, current_pixel_position, 6);
 
                 for (int i = 0; i < data.size(); i++) {
 
@@ -225,7 +229,22 @@ int window_with_line(void *ptr_to_data) {
                     };
                     draw_big_point(renderer, current_pixel_position, 6);
 
+
+
+
+
+
+                     temp_x = data[i].x;
+                     temp_y =  data[i].y;
                 }
+
+                current_pixel_position = {// draw dot on the right
+                        0,
+                        WINDOW_HEIGHT * WINDOW_WIDTH - WINDOW_HEIGHT / 2
+
+                };
+                draw_big_point(renderer, current_pixel_position, 6);
+
                 SDL_RenderPresent(renderer);
             }
         }
